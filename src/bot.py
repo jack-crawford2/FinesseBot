@@ -65,7 +65,7 @@ class MyBot(BaseAgent):
             target_location = Vec3(nemesis_location)
             self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
         else:
-            target_location = ball_location
+            target_location = nemesis_location
 
         # Draw some things to help understand what the bot is thinking
         self.renderer.draw_line_3d(car_location, target_location, self.renderer.white())
