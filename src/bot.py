@@ -66,6 +66,10 @@ class MyBot(BaseAgent):
             self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
         else:
             target_location = ball_location
+        
+        #UNSTUCK
+        if car_location.dist(nemesis_location) < 50:
+            return self.begin_front_flip(packet)
 
         # Draw some things to help understand what the bot is thinking
         self.renderer.draw_line_3d(car_location, target_location, self.renderer.white())
