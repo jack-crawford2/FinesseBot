@@ -102,8 +102,8 @@ class MyBot(BaseAgent):
         # You can set more controls if you want, like controls.boost.
         self.renderer.draw_rect_2d(0, 0, 550, 100, True, self.renderer.cyan())
         self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
-        self.renderer.draw_string_2d(5, 40, 3, 1, ball_location.x, self.renderer.black())
-        self.renderer.draw_string_2d(25, 40, 3, 1, ball_location.y, self.renderer.black())
+        self.renderer.draw_string_2d(5, 40, 3, 1, "{ball_location.x:.1f}", self.renderer.black())
+        self.renderer.draw_string_2d(25, 40, 3, 1, "{ball_location.y:.1f}", self.renderer.black())
 
         return controls
 
