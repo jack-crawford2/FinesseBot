@@ -56,23 +56,24 @@ class MyBot(BaseAgent):
             ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + 2)
             target_location = Vec3(ball_in_future.physics.location)
             self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
+            state = "Anticipating"
         else:
             target_location = ball_location
-        state = "Thinking..." + ball_location
-        self.renderer.draw_rect_2d(0, 0, 350, 100, True, self.renderer.cyan())
-        self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
+            state = "On Ball" 
+        # self.renderer.draw_rect_2d(0, 0, 350, 100, True, self.renderer.cyan())
+        # self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
         
             
-        #ATTAAAACK
-        if car_location.dist(nemesis_location) < 1500:
-            # We're far away from the ball, let's try to lead it a little bit
-            target_location = Vec3(nemesis_location)
-            self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
-            state = "Attacking"
-        else:
-            target_location = ball_location
-            self.controller.boost = True
-        # #UNSTUCK
+        # #ATTAAAACK
+        # if car_location.dist(nemesis_location) < 1500:
+        #     # We're far away from the ball, let's try to lead it a little bit
+        #     target_location = Vec3(nemesis_location)
+        #     self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
+        #     state = "Attacking"
+        # else:
+        #     target_location = ball_location
+        #     self.controller.boost = True
+        # # #UNSTUCK
         # if car_location.dist(nemesis_location) < 50 and nemesis_velocity.length() < 500:
         #     return self.begin_front_flip(packet)
         
