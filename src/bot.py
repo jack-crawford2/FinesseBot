@@ -89,8 +89,8 @@ class MyBot(BaseAgent):
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1.0
         # You can set more controls if you want, like controls.boost.
-        self.renderer.draw_rect_2d(0, 0, 150, 200, True, self.renderer.cyan())
-        self.renderer.draw_string_2d(0, 0, 3, 1, state, self.renderer.black())
+        self.renderer.draw_rect_2d(0, 0, 250, 150, True, self.renderer.cyan())
+        self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
 
         return controls
 
