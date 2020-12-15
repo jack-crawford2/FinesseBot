@@ -58,7 +58,10 @@ class MyBot(BaseAgent):
         # else:
         #     target_location = ball_location
         
-
+        #Boost towards start
+        if ball_location.x == 0 and ball_location.y == 0:
+            self.aim(ball_location.x, ball_location.y)
+            self.controller.boost = True
         #ATTAAAACK
         if car_location.dist(nemesis_location) > 1500:
             # We're far away from the ball, let's try to lead it a little bit
@@ -67,6 +70,10 @@ class MyBot(BaseAgent):
         else:
             target_location = nemesis_location
 
+        #UNSTUCK
+        if car_location.dist(nemesis_location) < 50 and nemesis_velocity.length() < 500:
+            return self.begin_front_flip(packet)
+        
         # Draw some things to help understand what the bot is thinking
         self.renderer.draw_line_3d(car_location, target_location, self.renderer.white())
         self.renderer.draw_string_3d(car_location, 1, 1, f'Speed: {car_velocity.length():.1f}', self.renderer.white())
