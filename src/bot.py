@@ -48,6 +48,7 @@ class MyBot(BaseAgent):
             nemesis = packet.game_cars[0]
         nemesis_location = Vec3(nemesis.physics.location)
         nemesis_velocity = Vec3(nemesis.physics.velocity)
+        self.renderer.draw_line_3d(nemesis_location, car_location, self.renderer.red())
 
         # if car_location.dist(ball_location) > 1500:
         #     # We're far away from the ball, let's try to lead it a little bit
