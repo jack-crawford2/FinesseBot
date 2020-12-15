@@ -60,7 +60,7 @@ class MyBot(BaseAgent):
         
         #Boost towards start
         if ball_location.x == 0 and ball_location.y == 0:
-            self.aim(ball_location.x, ball_location.y)
+            target_location = ball_location
             self.controller.boost = True
         #ATTAAAACK
         if car_location.dist(nemesis_location) > 1500:
