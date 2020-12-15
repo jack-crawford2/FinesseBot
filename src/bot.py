@@ -49,7 +49,7 @@ class MyBot(BaseAgent):
         nemesis_location = Vec3(nemesis.physics.location)
         nemesis_velocity = Vec3(nemesis.physics.velocity)
         self.renderer.draw_line_3d(nemesis_location, car_location, self.renderer.red())
-
+         
         if car_location.dist(nemesis_location) < car_location.dist(ball_location):
             target_location = Vec3(nemesis_location)
             self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
@@ -100,8 +100,9 @@ class MyBot(BaseAgent):
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1.0
         # You can set more controls if you want, like controls.boost.
-        self.renderer.draw_rect_2d(0, 0, 350, 100, True, self.renderer.cyan())
+        self.renderer.draw_rect_2d(0, 0, 550, 100, True, self.renderer.cyan())
         self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
+        self.renderer.draw_string_2d(5, 40, 3, 1, ball_location.x, self.renderer.black())
 
         return controls
 
