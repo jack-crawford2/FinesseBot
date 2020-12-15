@@ -64,14 +64,11 @@ class MyBot(BaseAgent):
             target_location = ball_location
             self.controller.boost = True
         #ATTAAAACK
-        if car_location.dist(nemesis_location) > 1500:
+        if car_location.dist(nemesis_location) < 1500:
             # We're far away from the ball, let's try to lead it a little bit
             target_location = Vec3(nemesis_location)
             self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
             state = "Attacking"
-        else:
-            target_location = nemesis_location
-            state = "Attacking 2"
 
         #UNSTUCK
         if car_location.dist(nemesis_location) < 50 and nemesis_velocity.length() < 500:
@@ -92,7 +89,7 @@ class MyBot(BaseAgent):
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1.0
         # You can set more controls if you want, like controls.boost.
-        self.renderer.draw_rect_2d(0, 0, 400, 200, True, self.renderer.cyan())
+        self.renderer.draw_rect_2d(0, 0, 150, 200, True, self.renderer.cyan())
         self.renderer.draw_string_2d(0, 0, 3, 1, state, self.renderer.black())
 
         return controls
