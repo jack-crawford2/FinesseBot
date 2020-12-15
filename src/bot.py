@@ -61,17 +61,17 @@ class MyBot(BaseAgent):
         state = "Thinking..." + ball_location
         self.renderer.draw_rect_2d(0, 0, 350, 100, True, self.renderer.cyan())
         self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
-        #Boost towards start
-        if ball_location.x == 0 and ball_location.y == 0:
-            target_location = ball_location
-            self.controller.boost = True
+        
+            
         #ATTAAAACK
         if car_location.dist(nemesis_location) < 1500:
             # We're far away from the ball, let's try to lead it a little bit
             target_location = Vec3(nemesis_location)
             self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
             state = "Attacking"
-
+        else:
+            target_location = ball_location
+            self.controller.boost = True
         #UNSTUCK
         if car_location.dist(nemesis_location) < 50 and nemesis_velocity.length() < 500:
             return self.begin_front_flip(packet)
