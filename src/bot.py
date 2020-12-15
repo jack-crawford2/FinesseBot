@@ -58,7 +58,7 @@ class MyBot(BaseAgent):
         #     self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
         # else:
         #     target_location = ball_location
-        
+        state = "Thinking..."
         #Boost towards start
         if ball_location.x == 0 and ball_location.y == 0:
             target_location = ball_location
@@ -68,8 +68,10 @@ class MyBot(BaseAgent):
             # We're far away from the ball, let's try to lead it a little bit
             target_location = Vec3(nemesis_location)
             self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
+            state = "Attacking"
         else:
             target_location = nemesis_location
+            state = "Attacking 2"
 
         #UNSTUCK
         if car_location.dist(nemesis_location) < 50 and nemesis_velocity.length() < 500:
@@ -90,6 +92,8 @@ class MyBot(BaseAgent):
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1.0
         # You can set more controls if you want, like controls.boost.
+        self.renderer.draw_rect_2d(0, 0, 100, 50, True, self.renderer.cyan())
+        self.renderer.draw_string_2d(0, 0, 100, 50, state, self.renderer.black())
 
         return controls
 
