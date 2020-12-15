@@ -57,8 +57,10 @@ class MyBot(BaseAgent):
         #     target_location = Vec3(ball_in_future.physics.location)
         #     self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
         # else:
-        #     target_location = ball_location
-        state = "Thinking..."
+        target_location = ball_location
+        state = "Thinking..." + ball_location
+        self.renderer.draw_rect_2d(0, 0, 350, 100, True, self.renderer.cyan())
+        self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
         #Boost towards start
         if ball_location.x == 0 and ball_location.y == 0:
             target_location = ball_location
@@ -89,7 +91,7 @@ class MyBot(BaseAgent):
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1.0
         # You can set more controls if you want, like controls.boost.
-        self.renderer.draw_rect_2d(0, 0, 250, 150, True, self.renderer.cyan())
+        self.renderer.draw_rect_2d(0, 0, 350, 100, True, self.renderer.cyan())
         self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
 
         return controls
