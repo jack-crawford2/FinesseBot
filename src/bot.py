@@ -62,9 +62,12 @@ class MyBot(BaseAgent):
             target_location = Vec3(ball_in_future.physics.location)
             self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
             state = "Anticipating"
+            self.controller.boost = False
         else:
             target_location = ball_location
             state = "On Ball" 
+            self.controller.boost = True
+
         # self.renderer.draw_rect_2d(0, 0, 350, 100, True, self.renderer.cyan())
         # self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
         
