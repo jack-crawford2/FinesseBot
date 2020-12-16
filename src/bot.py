@@ -41,35 +41,39 @@ class MyBot(BaseAgent):
         car_location = Vec3(my_car.physics.location)
         car_velocity = Vec3(my_car.physics.velocity)
         ball_location = Vec3(packet.game_ball.physics.location)
-
+        goal = {}
         if(self.index == 0):
             nemesis = packet.game_cars[1]
             nemesisColor = self.renderer.cyan()
+            goal.x = 0
+            goal.y = 4096
         else:
             nemesis = packet.game_cars[0]
             nemesisColor = self.renderer.orange()
-
+            goal.x = 0
+            goal.y = -4096
         nemesis_location = Vec3(nemesis.physics.location)
         nemesis_velocity = Vec3(nemesis.physics.velocity)
         self.renderer.draw_line_3d(nemesis_location, car_location, self.renderer.red())
         controls = SimpleControllerState()
 
-        if car_location.dist(nemesis_location) < car_location.dist(ball_location):
-            target_location = nemesis_location
-            self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
-            state = "Attacking"
-            controls.boost = True
-        elif car_location.dist(ball_location) > 1500:
-            # We're far away from the ball, let's try to lead it a little bit
-            ball_prediction = self.get_ball_prediction_struct()  # This can predict bounces, etc
-            ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + 2)
-            target_location = Vec3(ball_in_future.physics.location)
-            self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
-            state = "Anticipating"
-            # self.controller.boost = False
-        else:
-            target_location = ball_location
-            state = "On Ball" 
+        # if car_location.x
+        target_location = ball_location
+        state = "On Ball" 
+        # elif car_location.dist(ball_location) > 1500:
+        #     # We're far away from the ball, let's try to lead it a little bit
+        #     ball_prediction = self.get_ball_prediction_struct()  # This can predict bounces, etc
+        #     ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + 2)
+        #     target_location = Vec3(ball_in_future.physics.location)
+        #     self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
+        #     state = "Anticipating"
+        #     # self.controller.boost = False
+        # else:
+        #     target_location = nemesis_location
+        #     self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
+        #     state = "Attacking"
+        #     controls.boost = True
+            
             # self.controller.boost = True
 
         # #ATTAAAACK
@@ -107,7 +111,7 @@ class MyBot(BaseAgent):
             self.renderer.draw_string_2d(5, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
             self.renderer.draw_string_2d(5, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
         else:
-            self.renderer.draw_rect_2d(250, 0, 500, 250, True, nemesisColor)
+            self.renderer.draw_rect_2d(250, 0, 250, 250, True, nemesisColor)
             self.renderer.draw_string_2d(255, 5, 2, 1, state, self.renderer.black())
             self.renderer.draw_string_2d(255, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
             self.renderer.draw_string_2d(255, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
