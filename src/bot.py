@@ -136,20 +136,13 @@ class MyBot(BaseAgent):
 
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1.0
-        if(self.index == 0):
-            # You can set more controls if you want, like controls.boost.
-            self.renderer.draw_rect_2d(0, 0, 250, 250, True, nemesisColor)
-            self.renderer.draw_string_2d(5, 5, 2, 1, state, self.renderer.black())
-            self.renderer.draw_string_2d(5, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
-            self.renderer.draw_string_2d(5, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
-            self.renderer.draw_string_2d(5, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
-        else:
-            self.renderer.draw_rect_2d(250, 0, 500, 250, True, nemesisColor)
-            self.renderer.draw_string_2d(255, 5, 2, 1, state, self.renderer.black())
-            self.renderer.draw_string_2d(255, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
-            self.renderer.draw_string_2d(255, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
-            self.renderer.draw_string_2d(255, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
- 
+        # You can set more controls if you want, like controls.boost.
+        self.renderer.draw_rect_2d(0, 0, 550, 200, True, nemesisColor)
+        self.renderer.draw_string_2d(5, 5, 2, 1, state, self.renderer.black())
+        self.renderer.draw_string_2d(5, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
+        self.renderer.draw_string_2d(5, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
+        self.renderer.draw_string_2d(5, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
+
         return controls
 
     def begin_front_flip(self, packet):
