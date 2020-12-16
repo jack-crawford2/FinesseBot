@@ -92,33 +92,35 @@ class MyBot(BaseAgent):
         car_location = Vec3(my_car.physics.location)
         car_velocity = Vec3(my_car.physics.velocity)
         ball_location = Vec3(packet.game_ball.physics.location)
-        goal = {}
-        if(self.index == 0):
-            goal["x"] = 0
-            goal["y"] = 4096
-        else:
-            goal["x"] = 0
-            goal["y"] = -4096
-        nemesis_location = Vec3(self.nemesis.physics.location)
-        nemesis_velocity = Vec3(self.nemesis.physics.velocity)
 
+        if(self.index == 0):
+            nemesis = packet.game_cars[1]
+            nemesisColor = self.renderer.cyan()
+        else:
+            nemesis = packet.game_cars[0]
+            nemesisColor = self.renderer.orange()
+
+        nemesis_location = Vec3(nemesis.physics.location)
+        nemesis_velocity = Vec3(nemesis.physics.velocity)
         self.renderer.draw_line_3d(nemesis_location, car_location, self.renderer.red())
         self.controls = SimpleControllerState()
 
-        print(car_location.ang_to(Vec3(goal["x"], goal["y"])))
-        self.bot_yaw = my_car.physics.rotation.yaw
-        self.bot_pos =my_car.physics.location
-
-        ball_pos = packet.game_ball.physics.location
-        self.aim(ball_pos.x, ball_pos.y)
-        target_location = ball_location
-        self.state = "On Ball" 
-
-        #     target_location = nemesis_location
-        #     self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
-        #     state = "Attacking"
-        #     controls.boost = True
-            
+        if car_location.dist(nemesis_location) < car_location.dist(ball_location):
+            target_location = nemesis_location
+            self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
+            state = "Attacking"
+            controls.boost = True
+        elif car_location.dist(ball_location) > 1500:
+            # We're far away from the ball, let's try to lead it a little bit
+            ball_prediction = self.get_ball_prediction_struct()  # This can predict bounces, etc
+            ball_in_future = find_slice_at_time(ball_prediction, packet.game_info.seconds_elapsed + 2)
+            target_location = Vec3(ball_in_future.physics.location)
+            self.renderer.draw_line_3d(ball_location, target_location, self.renderer.cyan())
+            state = "Anticipating"
+            # self.controller.boost = False
+        else:
+            target_location = ball_location
+            state = "On Ball" 
             # self.controller.boost = True
 
         
@@ -134,7 +136,20 @@ class MyBot(BaseAgent):
 
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1.0
-        
+        if(self.index == 0):
+            # You can set more controls if you want, like controls.boost.
+            self.renderer.draw_rect_2d(0, 0, 250, 250, True, nemesisColor)
+            self.renderer.draw_string_2d(5, 5, 2, 1, state, self.renderer.black())
+            self.renderer.draw_string_2d(5, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
+            self.renderer.draw_string_2d(5, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
+            self.renderer.draw_string_2d(5, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
+        else:
+            self.renderer.draw_rect_2d(250, 0, 500, 250, True, nemesisColor)
+            self.renderer.draw_string_2d(255, 5, 2, 1, state, self.renderer.black())
+            self.renderer.draw_string_2d(255, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
+            self.renderer.draw_string_2d(255, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
+            self.renderer.draw_string_2d(255, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
+ 
         return controls
 
     def begin_front_flip(self, packet):
