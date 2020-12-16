@@ -9,7 +9,7 @@ from util.sequence import Sequence, ControlStep
 from util.vec import Vec3
 
 
-class TutorialBot(BaseAgent):
+class FinesseBot(BaseAgent):
     def __init__(self, name, team, index):
         super().__init__(name, team, index)
         self.controller = SimpleControllerState()
@@ -62,8 +62,8 @@ class TutorialBot(BaseAgent):
         car_location = Vec3(my_car.physics.location)
         car_velocity = Vec3(my_car.physics.velocity)
         ball_location = Vec3(packet.game_ball.physics.location)
-        nemesis_location = Vec3(self.nemesis.physics.location)
-        nemesis_velocity = Vec3(self.nemesis.physics.velocity)
+        nemesis_location = Vec3(nemesis.physics.location)
+        nemesis_velocity = Vec3(nemesis.physics.velocity)
         if(self.index == 0):
             # You can set more controls if you want, like controls.boost.
             self.renderer.draw_rect_2d(0, 0, 250, 250, True, self.renderer.cyan())
