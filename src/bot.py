@@ -41,23 +41,24 @@ class MyBot(BaseAgent):
         car_location = Vec3(my_car.physics.location)
         car_velocity = Vec3(my_car.physics.velocity)
         ball_location = Vec3(packet.game_ball.physics.location)
-        goal = {}
+        goal = {"x":0, "y":0}
         if(self.index == 0):
             nemesis = packet.game_cars[1]
             nemesisColor = self.renderer.cyan()
-            goal.x = 0
-            goal.y = 4096
+            goal["x"] = 0
+            goal["y"] = 4096
         else:
             nemesis = packet.game_cars[0]
             nemesisColor = self.renderer.orange()
-            goal.x = 0
-            goal.y = -4096
+            goal["x"] = 0
+            goal["y"] = -4096
         nemesis_location = Vec3(nemesis.physics.location)
         nemesis_velocity = Vec3(nemesis.physics.velocity)
         self.renderer.draw_line_3d(nemesis_location, car_location, self.renderer.red())
         controls = SimpleControllerState()
 
         # if car_location.x
+        if car_location.a
         target_location = ball_location
         state = "On Ball" 
         # elif car_location.dist(ball_location) > 1500:
