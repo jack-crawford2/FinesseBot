@@ -20,9 +20,14 @@ class FinesseBot(BaseAgent):
         self.state = "Thinking..."
         
     def aim(self, target_x, target_y, goaly):
-        angle_between_bot_and_target = math.atan2(target_y - self.bot_pos.y, target_x - self.bot_pos.x)
+        angle_between_car_and_ball = math.atan2(target_y - self.bot_pos.y, target_x - self.bot_pos.x)
         angle_between_car_and_goal = math.atan2(goaly - self.bot_pos.y, 0 - self.bot_pos.x)
-        angle_front_to_target = angle_between_bot_and_target - self.bot_yaw
+        angle_between_ball_and_goal = math.atan2(goaly - target_y, 0 - target_x)
+
+        angle_front_to_target = angle_between_car_and_ball - self.bot_yaw
+
+        angle_front_to_goal = angle_between_car_and_goal - self.bot_yaw
+
 
         # Correct the values
         if angle_front_to_target < -math.pi:
@@ -30,21 +35,47 @@ class FinesseBot(BaseAgent):
 
         if angle_front_to_target > math.pi:
             angle_front_to_target -= 2 * math.pi
+        
+        if angle_front_to_goal < -math.pi:
+            angle_front_to_goal += 2 * math.pi
 
-        if angle_front_to_target < math.radians(-10):
+        if angle_front_to_goal > math.pi:
+            angle_front_to_goal -= 2 * math.pi
+
+        if angle_between_ball_and_goal < -math.pi:
+            angle_between_ball_and_goal += 2 * math.pi
+
+        if angle_between_ball_and_goal > math.pi:
+            angle_between_ball_and_goal -= 2 * math.pi
+
+        if angle_between_car_and_goal > math.radians(10) and angle_between_car_and_goal < math.radians(-10):
+            if angle_front_to_target < math.radians(-10):
+                # If the target is more than 10 degrees right from the centre, steer left
+                self.controller.steer = -1
+                self.state = "Left..."
+            elif angle_front_to_target > math.radians(10):
+                # If the target is more than 10 degrees left from the centre, steer right
+                self.controller.steer = 1
+                self.state = "Right..."
+
+            else:
+                # If the target is less than 10 degrees from the centre, steer straight
+                self.controller.steer = 0
+                self.state = "On..."
+        elif angle_front_to_goal < math.radians(-10):
             # If the target is more than 10 degrees right from the centre, steer left
             self.controller.steer = -1
             self.state = "Left..."
-
-        elif angle_front_to_target > math.radians(10):
+        elif angle_front_to_goal > math.radians(10):
             # If the target is more than 10 degrees left from the centre, steer right
             self.controller.steer = 1
             self.state = "Right..."
-
         else:
             # If the target is less than 10 degrees from the centre, steer straight
             self.controller.steer = 0
             self.state = "On..."
+
+
 
 
     def get_output(self, packet: GameTickPacket) -> SimpleControllerState:
