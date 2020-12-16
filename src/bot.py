@@ -61,6 +61,23 @@ class FinesseBot(BaseAgent):
         ball_location = Vec3(packet.game_ball.physics.location)
         nemesis_location = Vec3(nemesis.physics.location)
         nemesis_velocity = Vec3(nemesis.physics.velocity)
+       
+        # self.aim(ball_pos.x, ball_pos.y, goaly)
+        if(self.index == 0):
+            if(ball_location.y > car_location.y):
+                self.aim(ball_location.x, ball_location.y, goaly)
+                self.state = "Attacking ball"
+            else: 
+                self.aim(0, -goaly, goaly)
+                self.state = "Defense"
+        else:
+            if(ball_location.y < car_location.y):
+                self.state = "Attacking ball"
+                self.aim(ball_location.x, ball_location.y, goaly)
+            else: 
+                self.aim(0, -goaly, goaly)
+                self.state = "Defense"
+
         if(self.index == 0):
             # You can set more controls if you want, like controls.boost.
             self.renderer.draw_rect_2d(0, 0, 250, 250, True, self.renderer.cyan())
@@ -74,19 +91,6 @@ class FinesseBot(BaseAgent):
             self.renderer.draw_string_2d(255, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
             self.renderer.draw_string_2d(255, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
             self.renderer.draw_string_2d(255, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
-
-
-        # self.aim(ball_pos.x, ball_pos.y, goaly)
-        if(self.index == 0):
-            if(ball_location.y > car_location.y):
-                self.aim(ball_location.x, ball_location.y, goaly)
-            else: 
-                self.aim(0, -goaly, goaly)
-        else:
-            if(ball_location.y < car_location.y):
-                self.aim(ball_location.x, ball_location.y, goaly)
-            else: 
-                self.aim(0, -goaly, goaly)
 
 
         self.controller.throttle = 1
