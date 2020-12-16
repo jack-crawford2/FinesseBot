@@ -15,9 +15,9 @@ class MyBot(BaseAgent):
         super().__init__(name, team, index)
         self.active_sequence: Sequence = None
         self.boost_pad_tracker = BoostPadTracker()
-        self.nemesis = ""
+        self.nemesis
         self.controls = SimpleControllerState()
-        self.state = ""
+        self.state
 
     def aim(self, target_x, target_y):
         angle_between_bot_and_target = math.atan2(target_y - self.bot_pos.y, target_x - self.bot_pos.x)
