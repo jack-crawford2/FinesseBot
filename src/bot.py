@@ -15,8 +15,10 @@ class MyBot(BaseAgent):
         super().__init__(name, team, index)
         self.active_sequence: Sequence = None
         self.boost_pad_tracker = BoostPadTracker()
-        self.nemesis
-        self.controls = SimpleControllerState()
+        if(self.index == 0):
+            self.nemesis = packet.game_cars[1]
+        else:
+            self.nemesis = packet.game_cars[0]
         self.state
 
     def aim(self, target_x, target_y):
