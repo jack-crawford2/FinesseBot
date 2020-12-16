@@ -1,16 +1,23 @@
 from rlbot.agents.base_agent import BaseAgent, SimpleControllerState
+from rlbot.messages.flat.QuickChatSelection import QuickChatSelection
 from rlbot.utils.structures.game_data_struct import GameTickPacket
 import math
+from util.ball_prediction_analysis import find_slice_at_time
+from util.boost_pad_tracker import BoostPadTracker
+from util.drive import steer_toward_target
+from util.sequence import Sequence, ControlStep
+from util.vec import Vec3
 
 
-class TutorialBot(BaseAgent):
+class MyBot(BaseAgent):
+
     def __init__(self, name, team, index):
         super().__init__(name, team, index)
-        self.controller = SimpleControllerState()
-
-        # Game values
-        self.bot_pos = None
-        self.bot_yaw = None
+        self.active_sequence: Sequence = None
+        self.boost_pad_tracker = BoostPadTracker()
+        self.nemesis = ""
+        self.controls = SimpleControllerState()
+        self.state = ""
 
     def aim(self, target_x, target_y):
         angle_between_bot_and_target = math.atan2(target_y - self.bot_pos.y, target_x - self.bot_pos.x)
@@ -25,22 +32,120 @@ class TutorialBot(BaseAgent):
 
         if angle_front_to_target < math.radians(-10):
             # If the target is more than 10 degrees right from the centre, steer left
-            self.controller.steer = -1
+            self.controls.steer = -1
         elif angle_front_to_target > math.radians(10):
             # If the target is more than 10 degrees left from the centre, steer right
-            self.controller.steer = 1
+            self.controls.steer = 1
         else:
             # If the target is less than 10 degrees from the centre, steer straight
-            self.controller.steer = 0
-
+            self.controls.steer = 0
+    def initialize_agent(self):
+        # Set up information about the boost pads now that the game is active and the info is available
+        self.boost_pad_tracker.initialize_boosts(self.get_field_info())
+    def draw(self, packet:GameTickPacket):
+        if(self.index == 0):
+            self.nemesis = packet.game_cars[1]
+            nemesisColor = self.renderer.cyan()
+        else:
+            self.nemesis = packet.game_cars[0]
+            nemesisColor = self.renderer.orange()
+        my_car = packet.game_cars[self.index]
+        car_location = Vec3(my_car.physics.location)
+        car_velocity = Vec3(my_car.physics.velocity)
+        ball_location = Vec3(packet.game_ball.physics.location)
+        nemesis_location = Vec3(self.nemesis.physics.location)
+        nemesis_velocity = Vec3(self.nemesis.physics.velocity)
+        if(self.index == 0):
+            # You can set more controls if you want, like controls.boost.
+            self.renderer.draw_rect_2d(0, 0, 250, 250, True, nemesisColor)
+            self.renderer.draw_string_2d(5, 5, 2, 1, self.state, self.renderer.black())
+            self.renderer.draw_string_2d(5, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
+            self.renderer.draw_string_2d(5, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
+            self.renderer.draw_string_2d(5, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
+        else:
+            self.renderer.draw_rect_2d(250, 0, 250, 250, True, nemesisColor)
+            self.renderer.draw_string_2d(255, 5, 2, 1, self.state, self.renderer.black())
+            self.renderer.draw_string_2d(255, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
+            self.renderer.draw_string_2d(255, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
+            self.renderer.draw_string_2d(255, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
+ 
     def get_output(self, packet: GameTickPacket) -> SimpleControllerState:
-        # Update game data variables
-        self.bot_yaw = packet.game_cars[self.team].physics.rotation.yaw
-        self.bot_pos = packet.game_cars[self.index].physics.location
+        """
+        This function will be called by the framework many times per second. This is where you can
+        see the motion of the ball, etc. and return controls to drive your car.
+        """
+
+        # Keep our boost pad info updated with which pads are currently active
+        self.boost_pad_tracker.update_boost_status(packet)
+
+        # This is good to keep at the beginning of get_output. It will allow you to continue
+        # any sequences that you may have started during a previous call to get_output.
+        if self.active_sequence and not self.active_sequence.done:
+            controls = self.active_sequence.tick(packet)
+            if controls is not None:
+                return controls
+
+        # Gather some information about our car and the ball
+        my_car = packet.game_cars[self.index]
+        car_location = Vec3(my_car.physics.location)
+        car_velocity = Vec3(my_car.physics.velocity)
+        ball_location = Vec3(packet.game_ball.physics.location)
+        goal = {"x":0, "y":0}
+        if(self.index == 0):
+            goal["x"] = 0
+            goal["y"] = 4096
+        else:
+            goal["x"] = 0
+            goal["y"] = -4096
+        nemesis_location = Vec3(self.nemesis.physics.location)
+        nemesis_velocity = Vec3(self.nemesis.physics.velocity)
+        self.renderer.draw_line_3d(nemesis_location, car_location, self.renderer.red())
+        self.controls = SimpleControllerState()
+
+        print(car_location.ang_to(Vec3(goal["x"], goal["y"])))
+        self.bot_yaw = my_car.physics.rotation.yaw
+        self.bot_pos =my_car.physics.location
 
         ball_pos = packet.game_ball.physics.location
         self.aim(ball_pos.x, ball_pos.y)
+        target_location = ball_location
+        self.state = "On Ball" 
 
-        self.controller.throttle = 1
+        #     target_location = nemesis_location
+        #     self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
+        #     state = "Attacking"
+        #     controls.boost = True
+            
+            # self.controller.boost = True
 
-        return self.controller
+        
+        self.renderer.draw_line_3d(car_location, target_location, self.renderer.white())
+        self.renderer.draw_string_3d(car_location, 1, 1, f'Speed: {car_velocity.length():.1f}', self.renderer.white())
+        self.renderer.draw_string_3d(car_location, 3, 1, f'Ball: {ball_location.x:.1f}, {ball_location.y:.1f}', self.renderer.white())
+
+        self.renderer.draw_rect_3d(target_location, 8, 8, True, self.renderer.cyan(), centered=True)
+
+        if 750 < car_velocity.length() < 800:
+            # We'll do a front flip if the car is moving at a certain speed.
+            return self.begin_front_flip(packet)
+
+        controls.steer = steer_toward_target(my_car, target_location)
+        controls.throttle = 1.0
+        
+        return controls
+
+    def begin_front_flip(self, packet):
+        # Send some quickchat just for fun
+        self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
+
+        # Do a front flip. We will be committed to this for a few seconds and the bot will ignore other
+        # logic during that time because we are setting the active_sequence.
+        self.active_sequence = Sequence([
+            ControlStep(duration=0.05, controls=SimpleControllerState(jump=True)),
+            ControlStep(duration=0.05, controls=SimpleControllerState(jump=False)),
+            ControlStep(duration=0.2, controls=SimpleControllerState(jump=True, pitch=-1)),
+            ControlStep(duration=0.8, controls=SimpleControllerState()),
+        ])
+
+        # Return the controls associated with the beginning of the sequence so we can start right away.
+        return self.active_sequence.tick(packet)
