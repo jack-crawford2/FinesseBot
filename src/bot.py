@@ -21,7 +21,7 @@ class FinesseBot(BaseAgent):
         
     def aim(self, target_x, target_y, goaly):
         angle_between_bot_and_target = math.atan2(target_y - self.bot_pos.y, target_x - self.bot_pos.x)
-        angle_between_ball_and_goal = math.atan2(goaly - target_y, 0 - target_x)
+        angle_between_ball_and_goal = math.atan2(goaly - self.bot_pos.y, 0 - self.bot_pos.x)
         angle_front_to_target = angle_between_bot_and_target - self.bot_yaw
 
         # Correct the values
