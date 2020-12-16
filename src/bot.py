@@ -44,8 +44,11 @@ class MyBot(BaseAgent):
 
         if(self.index == 0):
             nemesis = packet.game_cars[1]
+            nemesisColor = self.renderer.cyan()
         else:
             nemesis = packet.game_cars[0]
+            nemesisColor = self.renderer.orange()
+
         nemesis_location = Vec3(nemesis.physics.location)
         nemesis_velocity = Vec3(nemesis.physics.velocity)
         self.renderer.draw_line_3d(nemesis_location, car_location, self.renderer.red())
@@ -97,7 +100,7 @@ class MyBot(BaseAgent):
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1.0
         # You can set more controls if you want, like controls.boost.
-        self.renderer.draw_rect_2d(0, 0, 550, 200, True, self.renderer.cyan())
+        self.renderer.draw_rect_2d(0, 0, 550, 200, True, nemesisColor)
         self.renderer.draw_string_2d(5, 5, 2, 1, state, self.renderer.black())
         self.renderer.draw_string_2d(5, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
         self.renderer.draw_string_2d(5, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
