@@ -103,13 +103,12 @@ class MyBot(BaseAgent):
         nemesis_location = Vec3(nemesis.physics.location)
         nemesis_velocity = Vec3(nemesis.physics.velocity)
         self.renderer.draw_line_3d(nemesis_location, car_location, self.renderer.red())
-        self.controls = SimpleControllerState()
-
+         
         if car_location.dist(nemesis_location) < car_location.dist(ball_location):
-            target_location = nemesis_location
+            target_location = Vec3(nemesis_location)
             self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
             state = "Attacking"
-            controls.boost = True
+            self.controller.boost = True
         elif car_location.dist(ball_location) > 1500:
             # We're far away from the ball, let's try to lead it a little bit
             ball_prediction = self.get_ball_prediction_struct()  # This can predict bounces, etc
@@ -123,7 +122,24 @@ class MyBot(BaseAgent):
             state = "On Ball" 
             # self.controller.boost = True
 
+        # self.renderer.draw_rect_2d(0, 0, 350, 100, True, self.renderer.cyan())
+        # self.renderer.draw_string_2d(5, 5, 3, 1, state, self.renderer.black())
         
+            
+        # #ATTAAAACK
+        # if car_location.dist(nemesis_location) < 1500:
+        #     # We're far away from the ball, let's try to lead it a little bit
+        #     target_location = Vec3(nemesis_location)
+        #     self.renderer.draw_line_3d(nemesis_location, target_location, self.renderer.cyan())
+        #     state = "Attacking"
+        # else:
+        #     target_location = ball_location
+        #     self.controller.boost = True
+        # # #UNSTUCK
+        # if car_location.dist(nemesis_location) < 50 and nemesis_velocity.length() < 500:
+        #     return self.begin_front_flip(packet)
+        
+        # Draw some things to help understand what the bot is thinking
         self.renderer.draw_line_3d(car_location, target_location, self.renderer.white())
         self.renderer.draw_string_3d(car_location, 1, 1, f'Speed: {car_velocity.length():.1f}', self.renderer.white())
         self.renderer.draw_string_3d(car_location, 3, 1, f'Ball: {ball_location.x:.1f}, {ball_location.y:.1f}', self.renderer.white())
@@ -134,14 +150,13 @@ class MyBot(BaseAgent):
             # We'll do a front flip if the car is moving at a certain speed.
             return self.begin_front_flip(packet)
 
+        controls = SimpleControllerState()
         controls.steer = steer_toward_target(my_car, target_location)
         controls.throttle = 1.0
         # You can set more controls if you want, like controls.boost.
-        self.renderer.draw_rect_2d(0, 0, 550, 200, True, nemesisColor)
+        self.renderer.draw_rect_2d(0, 0, 750, 100, True, self.renderer.cyan())
         self.renderer.draw_string_2d(5, 5, 2, 1, state, self.renderer.black())
         self.renderer.draw_string_2d(5, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
-        self.renderer.draw_string_2d(5, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
-        self.renderer.draw_string_2d(5, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
 
         return controls
 
