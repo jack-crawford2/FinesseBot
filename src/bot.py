@@ -16,9 +16,9 @@ class MyBot(BaseAgent):
         self.active_sequence: Sequence = None
         self.boost_pad_tracker = BoostPadTracker()
         if(self.index == 0):
-            self.nemesis = packet.game_cars[1]
+            self.nemesis = GameTickPacket.game_cars[1]
         else:
-            self.nemesis = packet.game_cars[0]
+            self.nemesis = GameTickPacket.game_cars[0]
         self.state
 
     def aim(self, target_x, target_y):
