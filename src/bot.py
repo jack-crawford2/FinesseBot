@@ -92,7 +92,7 @@ class MyBot(BaseAgent):
         car_location = Vec3(my_car.physics.location)
         car_velocity = Vec3(my_car.physics.velocity)
         ball_location = Vec3(packet.game_ball.physics.location)
-        goal = {"x":0, "y":0}
+        goal = {}
         if(self.index == 0):
             goal["x"] = 0
             goal["y"] = 4096
@@ -101,6 +101,7 @@ class MyBot(BaseAgent):
             goal["y"] = -4096
         nemesis_location = Vec3(self.nemesis.physics.location)
         nemesis_velocity = Vec3(self.nemesis.physics.velocity)
+
         self.renderer.draw_line_3d(nemesis_location, car_location, self.renderer.red())
         self.controls = SimpleControllerState()
 
