@@ -81,12 +81,12 @@ class FinesseBot(BaseAgent):
             if(ball_location.y > car_location.y):
                 self.aim(ball_location.x, ball_location.y, goaly)
             else: 
-                self.aim(0, goaly, goaly)
+                self.aim(0, -goaly, goaly)
         else:
             if(ball_location.y < car_location.y):
                 self.aim(ball_location.x, ball_location.y, goaly)
             else: 
-                self.aim(0, goaly, goaly)
+                self.aim(0, -goaly, goaly)
 
 
         self.controller.throttle = 1
