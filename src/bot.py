@@ -119,6 +119,8 @@ class FinesseBot(BaseAgent):
             self.renderer.draw_string_2d(5, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
             self.renderer.draw_string_2d(5, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
             self.renderer.draw_string_2d(5, 150, 1, 1, str(math.atan2(ball_location.y - car_location.y, ball_location.x - car_location.x)), self.renderer.black())
+            self.renderer.draw_string_2d(5, 180, 1, 1, str(math.atan2(goaly - car_location.y, 0 - car_location.x)), self.renderer.black())
+            self.renderer.draw_string_2d(5, 210, 1, 1, str(math.atan2(goaly - ball_location.y, 0 - ball_location.x)), self.renderer.black())
 
         else:
             self.renderer.draw_rect_2d(250, 0, 250, 250, True, self.renderer.orange())
@@ -127,6 +129,8 @@ class FinesseBot(BaseAgent):
             self.renderer.draw_string_2d(255, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
             self.renderer.draw_string_2d(255, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
             self.renderer.draw_string_2d(255, 150, 1, 1, str(math.atan2(ball_location.y - car_location.y, ball_location.x - car_location.x)), self.renderer.black())
+            self.renderer.draw_string_2d(255, 180, 1, 1, str(math.atan2(goaly - car_location.y, 0 - car_location.x)), self.renderer.black())
+            self.renderer.draw_string_2d(255, 210, 1, 1, str(math.atan2(goaly - ball_location.y, 0 - ball_location.x)), self.renderer.black())
 
 
         self.controller.throttle = 1
