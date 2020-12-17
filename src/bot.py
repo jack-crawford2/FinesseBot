@@ -77,7 +77,7 @@ class FinesseBot(BaseAgent):
         nemesis_velocity = Vec3(nemesis.physics.velocity)
        
         # self.aim(ball_pos.x, ball_pos.y, goaly)
-        if car_velocity.length() < 500:
+        if 250 < car_velocity.length() < 800:
             # We'll do a front flip if the car is moving at a certain speed.
             return self.begin_front_flip(packet)
         if(self.index == 0):
