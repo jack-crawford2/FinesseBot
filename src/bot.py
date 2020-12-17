@@ -64,15 +64,23 @@ class FinesseBot(BaseAgent):
        
         # self.aim(ball_pos.x, ball_pos.y, goaly)
         if(self.index == 0):
-            if(ball_location.y+500 > car_location.y):
+            if ball_location.y > (goaly-500) and car_location.y > (goaly-750):
+                #aim for goal
                 self.aim(ball_location.x, ball_location.y, goaly)
-                self.state = "Attacking ball"
+                self.state = "Shot?"
+            elif(ball_location.y+500 > car_location.y):
+                self.aim(ball_location.x, ball_location.y, goaly)
+                self.state = "Offense"
             else: 
                 self.aim(0, -goaly, goaly)
                 self.state = "Defense"
         else:
-            if(ball_location.y-500 < car_location.y):
-                self.state = "Attacking ball"
+            if ball_location.y < (goaly+500) and car_location.y < (goaly+750):
+                #aim for goal
+                self.aim(ball_location.x, ball_location.y, goaly)
+                self.state = "Shot?"
+            elif(ball_location.y-500 < car_location.y):
+                self.state = "Offense"
                 self.aim(ball_location.x, ball_location.y, goaly)
             else: 
                 self.aim(0, -goaly, goaly)
