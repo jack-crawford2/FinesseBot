@@ -41,7 +41,21 @@ class FinesseBot(BaseAgent):
             self.controller.steer = 0
 
 
+    def begin_front_flip(self, packet):
+            # Send some quickchat just for fun
+        self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
 
+        # Do a front flip. We will be committed to this for a few seconds and the bot will ignore other
+        # logic during that time because we are setting the active_sequence.
+        self.active_sequence = Sequence([
+            ControlStep(duration=0.05, controls=SimpleControllerState(jump=True)),
+            ControlStep(duration=0.05, controls=SimpleControllerState(jump=False)),
+            ControlStep(duration=0.2, controls=SimpleControllerState(jump=True, pitch=-1)),
+            ControlStep(duration=0.8, controls=SimpleControllerState()),
+        ])
+
+        # Return the controls associated with the beginning of the sequence so we can start right away.
+        return self.active_sequence.tick(packet)
 
     def get_output(self, packet: GameTickPacket) -> SimpleControllerState:
         # Update game data variables
@@ -63,6 +77,9 @@ class FinesseBot(BaseAgent):
         nemesis_velocity = Vec3(nemesis.physics.velocity)
        
         # self.aim(ball_pos.x, ball_pos.y, goaly)
+        if car_velocity.length() < 500:
+            # We'll do a front flip if the car is moving at a certain speed.
+            return self.begin_front_flip(packet)
         if(self.index == 0):
             if ball_location.y > (goaly-500) and car_location.y > (goaly-750):
                 #aim for goal
