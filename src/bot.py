@@ -13,6 +13,7 @@ class FinesseBot(BaseAgent):
     def __init__(self, name, team, index):
         super().__init__(name, team, index)
         self.controller = SimpleControllerState()
+        self.active_sequence: Sequence = None
 
         # Game values
         self.bot_pos = None
