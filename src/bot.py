@@ -55,7 +55,7 @@ class FinesseBot(BaseAgent):
         ])
 
         # Return the controls associated with the beginning of the sequence so we can start right away.
-        self.active_sequence.tick(packet)
+        return self.active_sequence.tick(packet)
 
     def get_output(self, packet: GameTickPacket) -> SimpleControllerState:
         # Update game data variables
@@ -78,11 +78,14 @@ class FinesseBot(BaseAgent):
        
         # self.aim(ball_pos.x, ball_pos.y, goaly)
         if car_location.dist(nemesis_location) < 20:
-            self.begin_front_flip(packet)
+            self.state = "flipStuck?"
+            return self.begin_front_flip(packet)
         if 2 < car_velocity.length() < 800:
+            self.state = "flipSpeed?"
             # We'll do a front flip if the car is moving at a certain speed.
-            self.begin_front_flip(packet)
+            return self.begin_front_flip(packet)
         if car_location.dist(ball_location) > 350:
+            self.state = "Boost?"
             self.controller.boost = True
         if(self.index == 0):
             if ball_location.y > (goaly-500) and car_location.y > (goaly-750):
