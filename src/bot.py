@@ -84,7 +84,7 @@ class FinesseBot(BaseAgent):
         if 200 < car_velocity.length() < 800:
             self.state = "flipSpeed?"
             # We'll do a front flip if the car is moving at a certain speed.
-            return self.begin_front_flip(packet)
+            self.controller.boost = True
         if car_location.dist(ball_location) > 350:
             self.state = "Boost?"
             self.controller.boost = True
