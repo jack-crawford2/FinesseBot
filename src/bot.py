@@ -81,7 +81,7 @@ class FinesseBot(BaseAgent):
         if car_location.dist(nemesis_location) < 20:
             self.state = "flipStuck?"
             return self.begin_front_flip(packet)
-        if 2 < car_velocity.length() < 800:
+        if 200 < car_velocity.length() < 800:
             self.state = "flipSpeed?"
             # We'll do a front flip if the car is moving at a certain speed.
             return self.begin_front_flip(packet)
