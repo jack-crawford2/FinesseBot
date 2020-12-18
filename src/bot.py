@@ -116,6 +116,8 @@ class FinesseBot(BaseAgent):
         if car_location.dist(nemesis_location) < 20:
             self.state = "flipStuck?"
             return self.begin_front_flip(packet)
+        elif ball_location.x == 0 and ball_location.y == 0:
+            self.aim(0, 0, goaly)
         else:
             self.aim_between_defense(ball_location.x, ball_location.y, goaly)
 
