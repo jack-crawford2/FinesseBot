@@ -66,10 +66,10 @@ class FinesseBot(BaseAgent):
         # if angle_front_to_goal > math.pi:
         #     angle_front_to_goal -= 2 * math.pi
 
-        if angle_between_ball_and_goal < angle_between_bot_and_goal:
+        if angle_between_ball_and_goal - angle_between_bot_and_goal > math.radians(20):
             self.state = "left"
             self.controller.steer = -1
-        elif angle_between_ball_and_goal > angle_between_bot_and_goal:
+        elif angle_between_ball_and_goal > angle_between_bot_and_goal < math.radians(20):
             self.controller.steer = 1
             self.state = "right"
 
