@@ -51,20 +51,20 @@ class FinesseBot(BaseAgent):
         angle_front_to_goal = angle_between_bot_and_goal - self.bot_yaw
 
         # Correct the values
-        if angle_front_to_ball < -math.pi:
-            angle_front_to_ball += 2 * math.pi
-        if angle_front_to_ball > math.pi:
-            angle_front_to_ball -= 2 * math.pi
+        # if angle_front_to_ball < -math.pi:
+        #     angle_front_to_ball += 2 * math.pi
+        # if angle_front_to_ball > math.pi:
+        #     angle_front_to_ball -= 2 * math.pi
 
-        if angle_between_ball_and_goal < -math.pi:
-            angle_between_ball_and_goal += 2 * math.pi
-        if angle_between_ball_and_goal > math.pi:
-            angle_between_ball_and_goal -= 2 * math.pi
+        # if angle_between_ball_and_goal < -math.pi:
+        #     angle_between_ball_and_goal += 2 * math.pi
+        # if angle_between_ball_and_goal > math.pi:
+        #     angle_between_ball_and_goal -= 2 * math.pi
 
-        if angle_front_to_goal < -math.pi:
-                angle_front_to_goal += 2 * math.pi
-        if angle_front_to_goal > math.pi:
-            angle_front_to_goal -= 2 * math.pi
+        # if angle_front_to_goal < -math.pi:
+        #         angle_front_to_goal += 2 * math.pi
+        # if angle_front_to_goal > math.pi:
+        #     angle_front_to_goal -= 2 * math.pi
 
         if angle_between_ball_and_goal < angle_between_bot_and_goal:
             self.state = "left"
