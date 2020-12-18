@@ -59,9 +59,9 @@ class FinesseBot(BaseAgent):
         if angle_front_to_goal > math.pi:
             angle_front_to_goal -= 2 * math.pi
 
-        if angle_between_bot_and_goal > angle_between_bot_and_ball:
+        if (angle_between_bot_and_goal - angle_between_bot_and_ball) < math.radians(-10):
             self.controller.steer = -1
-        elif angle_between_bot_and_goal < angle_between_bot_and_ball:
+        elif (angle_between_bot_and_goal - angle_between_bot_and_ball) > math.radians(10):
             self.controller.steer = 1
         elif angle_front_to_ball < math.radians(-10):
             # If the target is more than 10 degrees right from the centre, steer left
@@ -110,11 +110,13 @@ class FinesseBot(BaseAgent):
        
         # self.aim(ball_pos.x, ball_pos.y, goaly)
         self.state = "trying defense"
-        self.aim_between_defense(ball_location.x, ball_location.y, goaly)
 
-        # if car_location.dist(nemesis_location) < 20:
-        #     self.state = "flipStuck?"
-        #     return self.begin_front_flip(packet)
+        if car_location.dist(nemesis_location) < 20:
+            self.state = "flipStuck?"
+            return self.begin_front_flip(packet)
+        else:
+            self.aim_between_defense(ball_location.x, ball_location.y, goaly)
+
         # if 200 < car_velocity.length() < 800:
         #     self.state = "flipSpeed?"
         #     # We'll do a front flip if the car is moving at a certain speed.
