@@ -96,9 +96,11 @@ class FinesseBot(BaseAgent):
         else:
             self.aim(ball_location.x, ball_location.y, goaly)
             self.state = "attack"
-            if car_location.dist(ball_location) > 300:
+            if car_location.dist(ball_location) > 500 or (ball_location.x == 0 and ball_location.y == 0):
                 self.controller.boost = True
-
+            if car_location.dist(ball_location) < 150:
+                self.controller.pitch = -1
+                self.controller.jump = True
         if(self.index == 0):
             self.renderer.draw_rect_2d(0, 0, 250, 250, True, self.renderer.cyan())
             self.renderer.draw_string_2d(5, 5, 2, 1, self.state, self.renderer.black())
