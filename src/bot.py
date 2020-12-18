@@ -126,15 +126,25 @@ class FinesseBot(BaseAgent):
         nemesis_velocity = Vec3(nemesis.physics.velocity)
        
         # self.aim(ball_pos.x, ball_pos.y, goaly)
-        self.state = "trying defense"
+        # self.state = "trying defense"
+
+        ball_to_home_y = abs(-goaly - ball_location.y)
+        car_to_home_y = abs(-goaly - car_location.y)
 
         if car_location.dist(nemesis_location) < 20:
             self.state = "flipStuck?"
             return self.begin_front_flip(packet)
-        elif ball_location.x == 0 and ball_location.y == 0:
-            self.aim(0, 0, goaly)
+        elif ball_to_home_y < car_to_home_y:
+            self.state = "d pos"
+            self.aim((ball_location.x)/2, (goaly - ball_location.y)/2, goaly)
         else:
-            self.aim_between_defense(ball_location.x, ball_location.y, goaly)
+            self.aim(ball_location.x, ball_location.y, goaly)
+            self.state = "attack"
+
+        # elif ball_location.x == 0 and ball_location.y == 0:
+        #     self.aim(0, 0, goaly)
+        # else:
+        #     self.aim_between_defense(ball_location.x, ball_location.y, goaly)
 
         # if 200 < car_velocity.length() < 800:
         #     self.state = "flipSpeed?"
