@@ -45,6 +45,8 @@ class FinesseBot(BaseAgent):
         angle_between_bot_and_ball = math.atan2(ball_y - self.bot_pos.y, ball_x - self.bot_pos.x)
         angle_front_to_ball = angle_between_bot_and_ball - self.bot_yaw
 
+        angle_between_ball_and_goal = math.atan2(goaly - ball_y, 0 - ball_x)
+
         angle_between_bot_and_goal = math.atan2(goaly - self.bot_pos.y, 0 - self.bot_pos.x)
         angle_front_to_goal = angle_between_bot_and_goal - self.bot_yaw
 
@@ -54,15 +56,20 @@ class FinesseBot(BaseAgent):
         if angle_front_to_ball > math.pi:
             angle_front_to_ball -= 2 * math.pi
 
+        if angle_between_ball_and_goal < -math.pi:
+            angle_between_ball_and_goal += 2 * math.pi
+        if angle_between_ball_and_goal > math.pi:
+            angle_between_ball_and_goal -= 2 * math.pi
+
         if angle_front_to_goal < -math.pi:
                 angle_front_to_goal += 2 * math.pi
         if angle_front_to_goal > math.pi:
             angle_front_to_goal -= 2 * math.pi
 
-        if (angle_between_bot_and_ball - angle_between_bot_and_goal) < math.radians(-20):
+        if (angle_between_ball_and_goal - angle_between_bot_and_goal) < math.radians(-20):
             self.state = "left"
             self.controller.steer = -1
-        elif (angle_between_bot_and_ball - angle_between_bot_and_goal) > math.radians(20):
+        elif (angle_between_ball_and_goal - angle_between_bot_and_goal) > math.radians(20):
             self.controller.steer = 1
             self.state = "right"
         # elif angle_front_to_ball < math.radians(-10):
