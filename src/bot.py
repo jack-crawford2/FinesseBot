@@ -136,7 +136,7 @@ class FinesseBot(BaseAgent):
             return self.begin_front_flip(packet)
         elif ball_to_home_y < car_to_home_y:
             self.state = "d pos"
-            self.aim((ball_location.x)/2, (-goaly - ball_location.y)/2, goaly)
+            self.aim((ball_location.x)/2, abs(-goaly - ball_location.y)/2, goaly)
         else:
             self.aim(ball_location.x, ball_location.y, goaly)
             self.state = "attack"
