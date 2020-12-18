@@ -115,9 +115,12 @@ class FinesseBot(BaseAgent):
         if(self.index == 0):
             nemesis = packet.game_cars[1]
             goaly = 5000
+            mygoal = -1
         else:
             nemesis = packet.game_cars[0]
             goaly = -5000
+            mygoal = 1
+
         my_car = packet.game_cars[self.index]
         car_location = Vec3(my_car.physics.location)
         car_velocity = Vec3(my_car.physics.velocity)
@@ -136,7 +139,7 @@ class FinesseBot(BaseAgent):
             return self.begin_front_flip(packet)
         elif ball_to_home_y < car_to_home_y:
             self.state = "d pos"
-            self.aim((ball_location.x)/2, abs(-goaly - ball_location.y)/2, goaly)
+            self.aim((ball_location.x)/2, mygoal*abs(goaly - ball_location.y)/2, goaly)
         else:
             self.aim(ball_location.x, ball_location.y, goaly)
             self.state = "attack"
