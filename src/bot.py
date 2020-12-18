@@ -86,13 +86,16 @@ class FinesseBot(BaseAgent):
         car_to_ball = car_location.dist(ball_location)
         car_to_nem = car_location.dist(nemesis_location)
         if ball_location.x == 0 and ball_location.y == 0:
+            self.state = "kickoff"
             self.controller.boost = True
             self.aim(ball_location.x, ball_location.y, goaly)
         elif car_location.dist(nemesis_location) < 175:
+            self.state = "avoid"
             self.controller.jump = True
             self.controller.roll = -1
             self.controller.throttle = 0.7
             self.controller.steer = -1
+            return self.controller
         elif ball_to_home_y < car_to_home_y:
             self.state = "d pos"
             self.aim((ball_location.x)/2, mygoal*abs(goaly - ball_location.y)/2, goaly)
