@@ -40,56 +40,6 @@ class FinesseBot(BaseAgent):
         else:
             # If the target is less than 10 degrees from the centre, steer straight
             self.controller.steer = 0
-
-    def aim_between_defense(self, ball_x, ball_y, goaly):
-        angle_between_bot_and_ball = math.atan2(ball_y - self.bot_pos.y, ball_x - self.bot_pos.x)
-        angle_front_to_ball = angle_between_bot_and_ball - self.bot_yaw
-
-        angle_between_ball_and_goal = math.atan2(goaly - ball_y, 0 - ball_x)
-
-        angle_between_bot_and_goal = math.atan2(goaly - self.bot_pos.y, 0 - self.bot_pos.x)
-        angle_front_to_goal = angle_between_bot_and_goal - self.bot_yaw
-
-        # Correct the values
-        # if angle_front_to_ball < -math.pi:
-        #     angle_front_to_ball += 2 * math.pi
-        # if angle_front_to_ball > math.pi:
-        #     angle_front_to_ball -= 2 * math.pi
-
-        # if angle_between_ball_and_goal < -math.pi:
-        #     angle_between_ball_and_goal += 2 * math.pi
-        # if angle_between_ball_and_goal > math.pi:
-        #     angle_between_ball_and_goal -= 2 * math.pi
-
-        # if angle_front_to_goal < -math.pi:
-        #         angle_front_to_goal += 2 * math.pi
-        # if angle_front_to_goal > math.pi:
-        #     angle_front_to_goal -= 2 * math.pi
-
-        if angle_between_ball_and_goal - angle_between_bot_and_goal < math.radians(20):
-            self.state = "left"
-            self.controller.steer = -1
-        elif angle_between_ball_and_goal > angle_between_bot_and_goal > math.radians(20):
-            self.controller.steer = 1
-            self.state = "right"
-
-
-        # if (angle_between_ball_and_goal - angle_between_bot_and_goal) < math.radians(-20):
-        #     self.state = "left"
-        #     self.controller.steer = -1
-        # elif (angle_between_ball_and_goal - angle_between_bot_and_goal) > math.radians(20):
-        #     self.controller.steer = 1
-        #     self.state = "right"
-        # elif angle_front_to_ball < math.radians(-10):
-        #     # If the target is more than 10 degrees right from the centre, steer left
-        #     self.controller.steer = -1
-        # elif angle_front_to_ball > math.radians(10):
-        #     # If the target is more than 10 degrees left from the centre, steer right
-        #     self.controller.steer = 1
-        else:
-            # If the target is less than 10 degrees from the centre, steer straight
-            self.controller.steer = 0
-    
     def begin_front_flip(self, packet):
             # Send some quickchat just for fun
         self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
@@ -143,18 +93,21 @@ class FinesseBot(BaseAgent):
         else:
             self.aim(ball_location.x, ball_location.y, goaly)
             self.state = "attack"
+            if car_location.dist(ball_location) > 300:
+                self.controller.boost = True
 
         if(self.index == 0):
-            # You can set more controls if you want, like controls.boost.
             self.renderer.draw_rect_2d(0, 0, 250, 250, True, self.renderer.cyan())
             self.renderer.draw_string_2d(5, 5, 2, 1, self.state, self.renderer.black())
             self.renderer.draw_string_2d(5, 60, 1, 1, "ball to home: " + str(ball_to_home_y), self.renderer.black())
             self.renderer.draw_string_2d(5, 90, 1, 1, "car to home: " + str(car_to_home_y), self.renderer.black())
+            self.renderer.draw_string_2d(5, 120, 1, 1, "car to ball: " + str(car_location.dist(ball_location)), self.renderer.black())
         else:
             self.renderer.draw_rect_2d(250, 0, 250, 250, True, self.renderer.orange())
             self.renderer.draw_string_2d(255, 5, 2, 1, self.state, self.renderer.black())
             self.renderer.draw_string_2d(255, 60, 1, 1, "ball to home: " + str(ball_to_home_y), self.renderer.black())
             self.renderer.draw_string_2d(255, 90, 1, 1, "car to home: " + str(car_to_home_y), self.renderer.black())
+            self.renderer.draw_string_2d(255, 120, 1, 1, "car to ball: " + str(car_location.dist(ball_location)), self.renderer.black())
 
 
         self.controller.throttle = 1
