@@ -41,7 +41,38 @@ class FinesseBot(BaseAgent):
             # If the target is less than 10 degrees from the centre, steer straight
             self.controller.steer = 0
 
+    def aim_between_defense(self, ball_x, ball_y, goaly):
+        angle_between_bot_and_ball = math.atan2(ball_y - self.bot_pos.y, ball_x - self.bot_pos.x)
+        angle_front_to_ball = angle_between_bot_and_ball - self.bot_yaw
 
+        angle_between_bot_and_goal = math.atan2(goaly - self.bot_pos.y, 0 - self.bot_pos.x)
+        angle_front_to_goal = angle_between_bot_and_goal - self.bot_yaw
+
+        # Correct the values
+        if angle_front_to_ball < -math.pi:
+            angle_front_to_ball += 2 * math.pi
+        if angle_front_to_ball > math.pi:
+            angle_front_to_ball -= 2 * math.pi
+
+        if angle_front_to_goal < -math.pi:
+                angle_front_to_goal += 2 * math.pi
+        if angle_front_to_goal > math.pi:
+            angle_front_to_goal -= 2 * math.pi
+
+        if angle_between_bot_and_goal > angle_between_bot_and_ball:
+            self.controller.steer = -1
+        elif angle_between_bot_and_goal < angle_between_bot_and_ball:
+            self.controller.steer = 1
+        elif angle_front_to_ball < math.radians(-10):
+            # If the target is more than 10 degrees right from the centre, steer left
+            self.controller.steer = -1
+        elif angle_front_to_ball > math.radians(10):
+            # If the target is more than 10 degrees left from the centre, steer right
+            self.controller.steer = 1
+        else:
+            # If the target is less than 10 degrees from the centre, steer straight
+            self.controller.steer = 0
+    
     def begin_front_flip(self, packet):
             # Send some quickchat just for fun
         self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
@@ -78,38 +109,41 @@ class FinesseBot(BaseAgent):
         nemesis_velocity = Vec3(nemesis.physics.velocity)
        
         # self.aim(ball_pos.x, ball_pos.y, goaly)
-        if car_location.dist(nemesis_location) < 20:
-            self.state = "flipStuck?"
-            return self.begin_front_flip(packet)
-        if 200 < car_velocity.length() < 800:
-            self.state = "flipSpeed?"
-            # We'll do a front flip if the car is moving at a certain speed.
-            self.controller.boost = True
-        if car_location.dist(ball_location) > 350:
-            self.state = "Boost?"
-            self.controller.boost = True
-        if(self.index == 0):
-            if ball_location.y > (goaly-500) and car_location.y > (goaly-750):
-                #aim for goal
-                self.aim(ball_location.x, ball_location.y, goaly)
-                self.state = "Shot?"
-            elif(ball_location.y+500 > car_location.y):
-                self.aim(ball_location.x, ball_location.y, goaly)
-                self.state = "Offense"
-            else: 
-                self.aim(0, -goaly, goaly)
-                self.state = "Defense"
-        else:
-            if ball_location.y < (goaly+500) and car_location.y < (goaly+750):
-                #aim for goal
-                self.aim(ball_location.x, ball_location.y, goaly)
-                self.state = "Shot?"
-            elif(ball_location.y-500 < car_location.y):
-                self.state = "Offense"
-                self.aim(ball_location.x, ball_location.y, goaly)
-            else: 
-                self.aim(0, -goaly, goaly)
-                self.state = "Defense"
+        self.state = "trying defense"
+        self.aim_between_defense(ball_location.x, ball_location.y, goaly)
+
+        # if car_location.dist(nemesis_location) < 20:
+        #     self.state = "flipStuck?"
+        #     return self.begin_front_flip(packet)
+        # if 200 < car_velocity.length() < 800:
+        #     self.state = "flipSpeed?"
+        #     # We'll do a front flip if the car is moving at a certain speed.
+        #     self.controller.boost = True
+        # if car_location.dist(ball_location) > 350:
+        #     self.state = "Boost?"
+        #     self.controller.boost = True
+        # if(self.index == 0):
+        #     if ball_location.y > (goaly-500) and car_location.y > (goaly-750):
+        #         #aim for goal
+        #         self.aim(ball_location.x, ball_location.y, goaly)
+        #         self.state = "Shot?"
+        #     elif(ball_location.y+500 > car_location.y):
+        #         self.aim(ball_location.x, ball_location.y, goaly)
+        #         self.state = "Offense"
+        #     else: 
+        #         self.aim(0, -goaly, goaly)
+        #         self.state = "Defense"
+        # else:
+        #     if ball_location.y < (goaly+500) and car_location.y < (goaly+750):
+        #         #aim for goal
+        #         self.aim(ball_location.x, ball_location.y, goaly)
+        #         self.state = "Shot?"
+        #     elif(ball_location.y-500 < car_location.y):
+        #         self.state = "Offense"
+        #         self.aim(ball_location.x, ball_location.y, goaly)
+        #     else: 
+        #         self.aim(0, -goaly, goaly)
+        #         self.state = "Defense"
 
         if(self.index == 0):
             # You can set more controls if you want, like controls.boost.
@@ -121,11 +155,12 @@ class FinesseBot(BaseAgent):
             self.renderer.draw_string_2d(5, 150, 1, 1, str(math.atan2(ball_location.y - car_location.y, ball_location.x - car_location.x)), self.renderer.black())
             self.renderer.draw_string_2d(5, 180, 1, 1, str(math.atan2(goaly - car_location.y, 0 - car_location.x)), self.renderer.black())
             self.renderer.draw_string_2d(5, 210, 1, 1, str(math.atan2(goaly - ball_location.y, 0 - ball_location.x)), self.renderer.black())
+            self.renderer.draw_string_2d(5, 240, 1, 1, str(self.bot_yaw), self.renderer.black())
 
         else:
             self.renderer.draw_rect_2d(250, 0, 250, 250, True, self.renderer.orange())
             self.renderer.draw_string_2d(255, 5, 2, 1, self.state, self.renderer.black())
-            self.renderer.draw_string_2d(255, 60, 1, 1, f'{ball_location.x:.1f}' +", " + f'{ball_location.y:.1f}', self.renderer.black())
+            self.renderer.draw_string_2d(255, 60, 1, 1, str(self.bot_yaw), self.renderer.black())
             self.renderer.draw_string_2d(255, 90, 1, 1, f'{car_location.dist(nemesis_location):.1f}' +", " + f'{car_location.dist(ball_location):.1f}', self.renderer.black())
             self.renderer.draw_string_2d(255, 120, 1, 1, str(car_location.dist(nemesis_location) < car_location.dist(ball_location)), self.renderer.black())
             self.renderer.draw_string_2d(255, 150, 1, 1, str(math.atan2(ball_location.y - car_location.y, ball_location.x - car_location.x)), self.renderer.black())
