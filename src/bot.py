@@ -59,9 +59,9 @@ class FinesseBot(BaseAgent):
         if angle_front_to_goal > math.pi:
             angle_front_to_goal -= 2 * math.pi
 
-        if (angle_between_bot_and_goal - angle_between_bot_and_ball) < math.radians(-10):
+        if (angle_between_bot_and_goal - angle_between_bot_and_ball) < math.radians(10):
             self.controller.steer = 1
-        elif (angle_between_bot_and_goal - angle_between_bot_and_ball) > math.radians(10):
+        elif (angle_between_bot_and_goal - angle_between_bot_and_ball) > math.radians(-10):
             self.controller.steer = -1
         elif angle_front_to_ball < math.radians(-10):
             # If the target is more than 10 degrees right from the centre, steer left
