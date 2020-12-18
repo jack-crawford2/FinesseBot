@@ -84,7 +84,7 @@ class FinesseBot(BaseAgent):
         ball_to_home_y = abs(-goaly - ball_location.y)
         car_to_home_y = abs(-goaly - car_location.y)
 
-        if car_location.dist(nemesis_location) < 20:
+        if car_location.dist(nemesis_location) < 300 and car_velocity < 200:
             self.state = "flipStuck?"
             return self.begin_front_flip(packet)
         elif ball_to_home_y < car_to_home_y:
