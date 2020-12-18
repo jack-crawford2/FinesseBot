@@ -106,7 +106,7 @@ class FinesseBot(BaseAgent):
             self.renderer.draw_string_2d(5, 90, 1, 1, "c2h: " + f'{car_to_home_y:.1f}', self.renderer.black())
             self.renderer.draw_string_2d(5, 120, 1, 1, "c2b: " + f'{car_to_ball:.1f}', self.renderer.black())
             self.renderer.draw_string_2d(5, 150, 1, 1, "c2n: " + f'{car_to_nem:.1f}', self.renderer.black())
-            self.renderer.draw_string_2d(5, 180, 1, 1, "v: " + str(my_car.physics.velocity), self.renderer.black())
+            # self.renderer.draw_string_2d(5, 180, 1, 1, "v: " + str(my_car.physics.velocity), self.renderer.black())
 
         else:
             self.renderer.draw_rect_2d(250, 0, 250, 250, True, self.renderer.orange())
@@ -115,7 +115,7 @@ class FinesseBot(BaseAgent):
             self.renderer.draw_string_2d(255, 90, 1, 1, "c2h: " + f'{car_to_home_y:.1f}', self.renderer.black())
             self.renderer.draw_string_2d(255, 120, 1, 1, "c2b: " + f'{car_to_ball:.1f}', self.renderer.black())
             self.renderer.draw_string_2d(255, 150, 1, 1, "c2n: " + f'{car_to_nem:.1f}', self.renderer.black())
-            self.renderer.draw_string_2d(255, 180, 1, 1, "v: " +str(my_car.physics.velocity), self.renderer.black())
+            # self.renderer.draw_string_2d(255, 180, 1, 1, "v: " +str(my_car.physics.velocity), self.renderer.black())
 
 
         self.controller.throttle = 1
