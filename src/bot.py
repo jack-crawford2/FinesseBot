@@ -60,9 +60,9 @@ class FinesseBot(BaseAgent):
         ball_to_left_target_direction = Vec3(Vec3(-890, goaly, 0) - ball_location).normalized()
         ball_to_right_target_direction = Vec3(Vec3(890, goaly, 0) - ball_location).normalized()
         
-        direction_of_approach = Vec3(clamp(car_to_ball_direction, ball_to_left_target_direction, ball_to_right_target_direction))
+        direction_of_approach = Vec3(self.clamp(car_to_ball_direction, ball_to_left_target_direction, ball_to_right_target_direction))
         offset_ball_location = Vec3(ball_location - (direction_of_approach * 92.75))
-        aim(self, offset_ball_location.x, offset_ball_location.y, goaly)
+        self.aim(offset_ball_location.x, offset_ball_location.y, goaly)
 
     def begin_front_flip(self, packet):
             # Send some quickchat just for fun
