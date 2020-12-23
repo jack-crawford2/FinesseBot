@@ -30,7 +30,7 @@ class FinesseBot(BaseAgent):
             angle_front_to_target += 2 * math.pi
         if angle_front_to_target > math.pi:
             angle_front_to_target -= 2 * math.pi
-        if angle_front_to_target > math.radians(62) or angle_front_to_target < math.radians(-62):
+        if angle_front_to_target > math.radians(90) or angle_front_to_target < math.radians(-90):
             self.controller.handbrake = True
             self.controller.steer = -1
             self.controller.yaw = 1
@@ -129,11 +129,6 @@ class FinesseBot(BaseAgent):
             self.state = "kickoff"
             self.controller.boost = True
             self.aim(ball_location.x, ball_location.y, goaly)
-        elif random.randint(1, 100000) == 69:
-            self.state = "fuckit"
-            self.controller.handbrake = True
-            self.controller.steer = -1
-            self.controller.yaw = 1
         elif car_location.dist(nemesis_location) < 175:
             self.state = "avoid"
             self.controller.jump = True
