@@ -154,6 +154,7 @@ class FinesseBot(BaseAgent):
                     self.controller.boost = True
                 else:
                     self.begin_front_flip(packet)
+                    self.active_sequence = ""
             else:
                 self.controller.boost = False
             if car_location.dist(ball_location) < 150:
