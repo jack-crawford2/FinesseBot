@@ -30,13 +30,13 @@ class FinesseBot(BaseAgent):
             angle_front_to_target += 2 * math.pi
         if angle_front_to_target > math.pi:
             angle_front_to_target -= 2 * math.pi
-        if angle_front_to_target > math.radians(32) or angle_front_to_target < math.radians(-32):
+        if angle_front_to_target > math.radians(62) or angle_front_to_target < math.radians(-62):
             self.controller.handbrake = True
             self.controller.steer = -1
             self.controller.yaw = 1
         else:
             self.controller.handbrake = False
-            
+
         if angle_front_to_target < math.radians(-10):
             # If the target is more than 10 degrees right from the centre, steer left
             self.controller.steer = -1
