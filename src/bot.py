@@ -113,7 +113,7 @@ class FinesseBot(BaseAgent):
             self.state = "kickoff"
             self.controller.boost = True
             self.aim(ball_location.x, ball_location.y, goaly)
-        elif random.randint(1, 100) == 69:
+        elif random.randint(1, 100000) == 69:
             self.state = "fuckit"
             self.controller.handbrake = True
             self.controller.steer = -1
