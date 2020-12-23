@@ -126,6 +126,7 @@ class FinesseBot(BaseAgent):
         car_to_home_y = abs(-goaly - car_location.y)
         car_to_ball = car_location.dist(ball_location)
         car_to_nem = car_location.dist(nemesis_location)
+        self.active_sequence = ""
         if ball_location.x == 0 and ball_location.y == 0:
             self.state = "kickoff"
             self.controller.boost = True
