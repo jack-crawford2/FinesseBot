@@ -7,7 +7,7 @@ from util.boost_pad_tracker import BoostPadTracker
 from util.drive import steer_toward_target
 from util.sequence import Sequence, ControlStep
 from util.vec import Vec3
-
+import random
 
 class FinesseBot(BaseAgent):
     def __init__(self, name, team, index):
@@ -40,6 +40,30 @@ class FinesseBot(BaseAgent):
         else:
             # If the target is less than 10 degrees from the centre, steer straight
             self.controller.steer = 0
+    
+    def clamp(self, direction, start, end):
+        is_right = direction.dot(end.cross(Vec3(0,0,-1))) < 0
+        is_left = direction.dot(start.cross(Vec3(0,0,-1))) < 0
+
+        if end.dot(start.cross(Vec3(0,0,-1))) > 0 if (is_right and is_left) else is_right or is_left:
+            return direction
+
+        if (start.dot(direction) < end.dot(direction)):
+            return end
+
+        return start
+
+    def shoot(self, ball_location, goaly):
+        car_to_ball = Vec3(ball_location - self.bot_pos)
+        car_to_ball_direction = Vec3(car_to_ball.normalized())
+
+        ball_to_left_target_direction = Vec3(Vec3(-890, goaly, 0) - ball_location).normalized()
+        ball_to_right_target_direction = Vec3(Vec3(890, goaly, 0) - ball_location).normalized()
+        
+        direction_of_approach = Vec3(clamp(car_to_ball_direction, ball_to_left_target_direction, ball_to_right_target_direction))
+        offset_ball_location = Vec3(ball_location - (direction_of_approach * 92.75))
+        aim(self, offset_ball_location.x, offset_ball_location.y, goaly)
+
     def begin_front_flip(self, packet):
             # Send some quickchat just for fun
         self.send_quick_chat(team_only=False, quick_chat=QuickChatSelection.Information_IGotIt)
@@ -89,6 +113,11 @@ class FinesseBot(BaseAgent):
             self.state = "kickoff"
             self.controller.boost = True
             self.aim(ball_location.x, ball_location.y, goaly)
+        elif random.randint(1, 100) == 100:
+            self.state = "fuckit"
+            self.controller.handbrake = True
+            self.controller.steer = -1
+            self.controller.yaw = 1
         elif car_location.dist(nemesis_location) < 175:
             self.state = "avoid"
             self.controller.jump = True
@@ -100,7 +129,8 @@ class FinesseBot(BaseAgent):
             self.state = "d pos"
             self.aim((ball_location.x)/2, mygoal*abs(goaly - ball_location.y)/2, goaly)
         else:
-            self.aim(ball_location.x, ball_location.y, goaly)
+            # self.aim(ball_location.x, ball_location.y, goaly)
+            self.shoot(ball_location, goaly)
             self.state = "attack"
             if car_location.dist(ball_location) > 500 or (ball_location.x == 0 and ball_location.y == 0):
                 self.controller.boost = True
