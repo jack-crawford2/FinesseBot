@@ -9,6 +9,7 @@ from util.sequence import Sequence, ControlStep
 from util.vec import Vec3
 import random
 
+
 class FinesseBot(BaseAgent):
     def __init__(self, name, team, index):
         super().__init__(name, team, index)
@@ -77,7 +78,7 @@ class FinesseBot(BaseAgent):
 
         side_of_approach_direction = self.sign(direction_of_approach.cross(Vec3(0, 0, 1)).dot(Vec3(ball_location - self.bot_pos)))
         car_to_ball_perpendicular = Vec3(car_to_ball.cross(Vec3(0,0, side_of_approach_direction))).normalized()
-        adjustment = Vec3(car_to_target).flat().ang_to(Vec3(direction_of_approach).flat()) * Vec3(offset_ball_location - self.bot_pos).flat() / 3.14
+        adjustment = Vec3(car_to_target).flat().ang_to(Vec3(direction_of_approach).flat()) * Vec3(offset_ball_location - self.bot_pos).flat().mag() / 3.14
         final_target = offset_ball_location + (car_to_ball_perpendicular * adjustment)
         self.aim(final_target.x, final_target.y, goaly)
     def begin_front_flip(self, packet):

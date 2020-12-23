@@ -107,3 +107,6 @@ class Vec3:
         """Returns the angle to the ideal vector. Angle will be between 0 and pi."""
         cos_ang = self.dot(ideal) / (self.length() * ideal.length())
         return math.acos(cos_ang)
+
+    def mag(self) -> float: 
+        return math.sqrt(sum(i**2 for i in self))
