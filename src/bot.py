@@ -30,7 +30,7 @@ class FinesseBot(BaseAgent):
             angle_front_to_target += 2 * math.pi
         if angle_front_to_target > math.pi:
             angle_front_to_target -= 2 * math.pi
-        if angle_front_to_target > math.radians(62) or angle_front_to_target < math.radians(-62):
+        if angle_front_to_target > math.radians(90) or angle_front_to_target < math.radians(-90):
             self.controller.handbrake = True
             self.controller.steer = -1
             self.controller.yaw = 1
@@ -129,11 +129,6 @@ class FinesseBot(BaseAgent):
             self.state = "kickoff"
             self.controller.boost = True
             self.aim(ball_location.x, ball_location.y, goaly)
-        elif random.randint(1, 100000) == 69:
-            self.state = "fuckit"
-            self.controller.handbrake = True
-            self.controller.steer = -1
-            self.controller.yaw = 1
         elif car_location.dist(nemesis_location) < 175:
             self.state = "avoid"
             self.controller.jump = True
@@ -144,13 +139,20 @@ class FinesseBot(BaseAgent):
         elif ball_to_home_y < car_to_home_y:
             self.state = "d pos"
             self.aim((ball_location.x)/2, mygoal*abs(goaly - ball_location.y)/2, goaly)
+            if car_location.dist(Vec3(ball_location.x/2, mygoal*abs(goaly - ball_location.y)/2, 0).flat()) > 500 or (ball_location.x == 0 and ball_location.y == 0):
+                self.controller.boost = True
+            else:
+                self.controller.boost = False
         else:
             # self.aim(ball_location.x, ball_location.y, goaly)
             self.shoot(ball_location, goaly)
             self.state = "attack"
             if car_location.dist(ball_location.flat()) > 500 or (ball_location.x == 0 and ball_location.y == 0):
-                self.controller.boost = True
-            else: 
+                if my_car.boost > 15:
+                    self.controller.boost = True
+                else:
+                    self.begin_front_flip(packet)
+            else:
                 self.controller.boost = False
             if car_location.dist(ball_location) < 150:
                 self.controller.pitch = -1
