@@ -46,7 +46,13 @@ class FinesseBot(BaseAgent):
         else:
             # If the target is less than 10 degrees from the centre, steer straight
             self.controller.steer = 0
-    
+    def sign(self, val):
+        if val > 0:
+            return 1
+        elif val == 0:
+            return 0
+        else:
+            return -1
     def clamp(self, direction, start, end):
         is_right = direction.dot(end.cross(Vec3(0,0,-1))) < 0
         is_left = direction.dot(start.cross(Vec3(0,0,-1))) < 0
@@ -68,7 +74,13 @@ class FinesseBot(BaseAgent):
         
         direction_of_approach = Vec3(self.clamp(car_to_ball_direction, ball_to_left_target_direction, ball_to_right_target_direction))
         offset_ball_location = Vec3(ball_location - (direction_of_approach * 92.75))
-        self.aim(offset_ball_location.x, offset_ball_location.y, goaly)
+
+        side_of_approach_direction = self.sign(direction_of_approach.cross(Vec3(0, 0, 1)).dot(Vec3(ball_location - self.bot_pos)))
+        car_to_ball_perpendicular = Vec3(car_to_ball.cross(Vec3(0,0, side_of_approach_direction))).normalized()
+# Vector adjustment = angle(flatten(car_to_target), flatten(direction_of_approach)) * magnitude(flatten(offset_ball_location - car_location)) / 3.14
+        adjustment = Vec3(car_to_ball).flat().ang_to(Vec3(direction_of_approach).flat()) * Vec3(offset_ball_location - self.bot_pos).flat() / 3.14
+        final_target = offset_ball_location + (car_to_ball_perpendicular * adjustment)
+        self.aim(final_target.x, final_target.y, goaly)
 
     def begin_front_flip(self, packet):
             # Send some quickchat just for fun
