@@ -148,7 +148,10 @@ class FinesseBot(BaseAgent):
             self.shoot(ball_location, goaly)
             self.state = "attack"
             if car_location.dist(ball_location.flat()) > 500 or (ball_location.x == 0 and ball_location.y == 0):
-                self.controller.boost = True
+                if my_car.boost > 15:
+                    self.controller.boost = True
+                else:
+                    self.begin_front_flip(packet)
             else:
                 self.controller.boost = False
             if car_location.dist(ball_location) < 150:
