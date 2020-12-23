@@ -68,7 +68,7 @@ class FinesseBot(BaseAgent):
     def shoot(self, ball_location, goaly):
         car_to_ball = Vec3(ball_location - self.bot_pos)
         car_to_ball_direction = Vec3(car_to_ball.normalized())
-
+        car_to_target = Vec3(Vec3(0, goaly, 0) - self.bot_pos)
         ball_to_left_target_direction = Vec3(Vec3(-890, goaly, 0) - ball_location).normalized()
         ball_to_right_target_direction = Vec3(Vec3(890, goaly, 0) - ball_location).normalized()
         
@@ -78,7 +78,7 @@ class FinesseBot(BaseAgent):
         side_of_approach_direction = self.sign(direction_of_approach.cross(Vec3(0, 0, 1)).dot(Vec3(ball_location - self.bot_pos)))
         car_to_ball_perpendicular = Vec3(car_to_ball.cross(Vec3(0,0, side_of_approach_direction))).normalized()
 # Vector adjustment = angle(flatten(car_to_target), flatten(direction_of_approach)) * magnitude(flatten(offset_ball_location - car_location)) / 3.14
-        adjustment = Vec3(car_to_ball).flat().ang_to(Vec3(direction_of_approach).flat()) * Vec3(offset_ball_location - self.bot_pos).flat() / 3.14
+        adjustment = Vec3(car_to_target).flat().ang_to(Vec3(direction_of_approach).flat()) * Vec3(offset_ball_location - self.bot_pos).flat() / 3.14
         final_target = offset_ball_location + (car_to_ball_perpendicular * adjustment)
         self.aim(final_target.x, final_target.y, goaly)
 
